@@ -1,4 +1,5 @@
 // LIRI Homework JS
+// ****************
 
 require("dotenv").config();
 
@@ -9,13 +10,11 @@ var fs = require("fs");
 var axios = require("axios");
 var moment = require("moment");
 
-
 var action = process.argv[2];
-// console.log(process.argv.slice(2));
 
-
-debugger;
 // Creating switch statement to use in cammand line.
+// -------------------------------------------------------------------------------------------------
+
 switch (action) {
   case "concert-this":
     concertThis();
@@ -35,12 +34,12 @@ switch (action) {
 }
 
 // Begin creating functions.
-// --------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-// // concert-this function
-function concertThis(artist) {
+// // concert-this function-------------------------------------------------------------------------
 
-  // var nodeArgs = process.argv;
+function concertThis() {
+
   var artist = "";
   artist = process.argv.slice(3).join(" ");
 
@@ -49,23 +48,29 @@ function concertThis(artist) {
   axios
     .get(queryUrl)
     .then(function (response) {
+      debugger;
+      // console.log("Response: " + response);
 
-      for (var i = 0; i < 1; i++) {
-        let venueRes = "--------------------------------------------------------------------" +
-          "\nVenue Name: " + response.data[i].venue.name +
-          "\nVenue Location: " + response.data[i].venue.city +
-          "\nDate of the Event: " + moment(response.data[i].datetime).format("MM/DD/YYYY") +
-          "\n--------------------------------------------------------------------";
-        console.log(venueRes);
+      function capitalize_Words(str) {
+        return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
       }
+
+      console.log("\n------------------------------Concert-This------------------------------\n" +
+        "\nArtist/Band Name: " + capitalize_Words(artist) +
+        "\nVenue Name: " + response.data[0].venue.name +
+        "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.country +
+        "\nDate of the Event: " + moment(response.data[0].datetime).format("MM-DD-YYYY") +
+        "\n------------------------------------------------------------------------\n"
+      );
     })
     .catch(function (error) {
       console.log(error);
     });
 };
 
-// // spotify-this-song function
+// // spotify-this-song function--------------------------------------------------------------------
 function spotifyThis() {
+  
   var search = process.argv.slice(3).join(" ");
   if (!search) {
     search = "The Sign";
@@ -76,22 +81,26 @@ function spotifyThis() {
     if (err) {
       return console.log('Error occurred: ' + err);
     } else {
-      var track = response.tracks.items;
-      console.log(track);
+      console.log("Search: " + search);
 
-      console.log("\n-----------------------------------------------------------\n" +
-        "\nArtist/Band:" + track.artists[0].name +
-        "\nSong: " + track.name +
-        "\nPreview Song: " + track.external_urls.spotify +
-        "\nAlbum: " + track.album.name +
-        "\n-----------------------------------------------------------\n");
+      // debugger;
+      // console.log("Response: " + response);
+      var spotSong = response.tracks.items[0];
+      // console.log("spotSong: " + spotSong);
+
+      console.log("\n---------------------------Spotify-this-song---------------------------\n" +
+        "\nArtist/Band: " + spotSong.artists[0].name +
+        "\nSong: " + spotSong.name +
+        "\nPreview Song: " + spotSong.external_urls.spotify +
+        "\nAlbum: " + spotSong.album.name + "\n" +
+        "\n-----------------------------------------------------------------------\n");
     }
   });
 
 };
 
 
-// movie-this function
+// movie-this function------------------------------------------------------------------------------
 function movieThis(movieName) {
 
   var nodeArgs = process.argv;
@@ -133,7 +142,7 @@ function movieThis(movieName) {
     })
 };
 
-
+// do-this function---------------------------------------------------------------------------------
 // function doThis() {
 
 // };
