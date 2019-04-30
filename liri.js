@@ -1,4 +1,5 @@
-// LIRI Homework JS
+// -------------------------------------------------------------------------------------------------
+// LIRI app
 // -------------------------------------------------------------------------------------------------
 require("dotenv").config();
 
@@ -12,6 +13,7 @@ var moment = require("moment");
 // -------------------------------------------------------------------------------------------------
 // Creating input function to use in cammand line.
 // -------------------------------------------------------------------------------------------------
+
 function input(action, param) {
   var printInput;
 
@@ -42,15 +44,16 @@ function input(action, param) {
     printInput = `${action} ${param}`
   }
 
-  // formats the printInput
-  printInput = `\n***********************************************************************\n` +
-    `${printInput}` +
-    `\n***********************************************************************\n`
+  // formats the printInput function
+  printInput =
+    `\n=======================================================================\n`
+    + `${printInput}` +
+    `\n=======================================================================\n`
   // displays user input to terminal/bash and writes it to log.txt 
   saveData(printInput);
 }
-
 // -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // concert-this function
@@ -71,15 +74,15 @@ function concertThis(param) {
         return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
       }
 
-      var printConcert = "\n-----------------------------Concert-This------------------------------\n" +
+      var printConcert =
+        "\n-----------------------------Concert-This------------------------------\n" +
         "\nArtist/Band Name: " + capitalize_Words(param) + "\n" +
         "\nVenue Name: " + response.data[0].venue.name + "\n" +
         "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.country + "\n" +
         "\nDate of the Event: " + moment(response.data[0].datetime).format("MM-DD-YYYY") + "\n" +
         "\n-----------------------------------------------------------------------\n" +
-        "\n***********************************************************************\n";
+        "\n";
       saveData(printConcert);
-
 
     })
     .catch(function (error) {
@@ -87,6 +90,7 @@ function concertThis(param) {
     });
 };
 // -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // // spotify-this-song function
@@ -104,24 +108,24 @@ function spotifyThis(param) {
 
     if (err) {
       return console.log('Error occurred: ' + err);
-    } else {
-      // console.log("Search: " + search);
-
+    }
+    else {
       var spotSong = response.tracks.items[0];
-      // console.log("spotSong: " + spotSong);
 
-      var printSong = "\n---------------------------Spotify-this-song---------------------------\n" +
+      var printSong =
+        "\n---------------------------Spotify-this-song---------------------------\n" +
         "\nArtist/Band: " + spotSong.artists[0].name + "\n" +
         "\nSong: " + spotSong.name + "\n" +
         "\nPreview Song: " + spotSong.external_urls.spotify + "\n" +
         "\nAlbum: " + spotSong.album.name + "\n" +
         "\n-----------------------------------------------------------------------\n" +
-        "\n***********************************************************************\n";
+        "\n";
       saveData(printSong);
     }
   });
 };
 // -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // movie-this function
@@ -129,12 +133,11 @@ function spotifyThis(param) {
 
 function movieThis(param) {
 
-  var nodeArgs = process.argv;
   var param = process.argv.slice(3).join("+");
 
   if (!param) {
     param = "Mr. Nobody";
-  } 
+  }
 
   var queryUrl = "http://www.omdbapi.com/?t=" + param + "&y=&plot=short&apikey=trilogy";
 
@@ -149,9 +152,45 @@ function movieThis(param) {
         } else {
           rottenTomatoes = response.data.Ratings[1].Value;
           return "\nRotten Tomatoes rating: " + response.data.Ratings[1].Value + "\n";
-        };
+        }
+      };
+      // Creating a wordWrap function to beautify the output to terminal and log.txt file
+      str = response.data.Plot;
+      str = wordWrap(str, 65);
+
+      function wordWrap(str, maxWidth) {
+        var newLineStr = "\n"; done = false; res = '';
+        do {
+          found = false;
+          // Inserts new line at first whitespace of the line
+          for (i = maxWidth - 1; i >= 0; i--) {
+            if (testWhite(str.charAt(i))) {
+              res = res + [str.slice(0, i), newLineStr].join('');
+              str = str.slice(i + 1);
+              found = true;
+              break;
+            }
+          }
+          // Inserts new line at maxWidth position, the word is too long to wrap
+          if (!found) {
+            res += [str.slice(0, maxWidth), newLineStr].join('');
+            str = str.slice(maxWidth);
+          }
+
+          if (str.length < maxWidth)
+            done = true;
+        } while (!done);
+
+        return res + str;
       }
-      var printMovie = "\n------------------------------Movie-This-------------------------------\n" +
+
+      function testWhite(x) {
+        var white = new RegExp(/^\s$/);
+        return white.test(x.charAt(0));
+      };
+
+      var printMovie =
+        "\n------------------------------Movie-This-------------------------------\n" +
         "\nTitle: " + response.data.Title + "\n" +
         "\nRelease Year: " + response.data.Year + "\n" +
         "\nIMDB rating: " + response.data.imdbRating + "\n" +
@@ -159,14 +198,15 @@ function movieThis(param) {
         "\nProduced in: " + response.data.Country + "\n" +
         "\nLanguage " + response.data.Language + "\n" +
         "\nActors: " + response.data.Actors + "\n" +
-        "\nPlot: " + response.data.Plot + "\n" +
+        "\nPlot: " + str + "\n" +
         "\n-----------------------------------------------------------------------\n" +
-        "\n***********************************************************************\n";
+        "\n";
       saveData(printMovie);
     })
-  
+
 };
 // -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // do-what-it-says function
@@ -183,6 +223,8 @@ function doThis() {
     input(data[0], data[1]);
   })
 }
+// -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // printData function
@@ -198,9 +240,8 @@ function saveData(log) {
     }
   })
 }
-
-
 // -------------------------------------------------------------------------------------------------
+
 
 // -------------------------------------------------------------------------------------------------
 // Calling functions
