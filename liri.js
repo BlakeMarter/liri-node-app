@@ -130,23 +130,11 @@ function spotifyThis(param) {
 function movieThis(param) {
 
   var nodeArgs = process.argv;
-  param = "";
+  var param = process.argv.slice(3).join("+");
 
   if (!param) {
     param = "Mr. Nobody";
   } 
-
-
-  for (var i = 3; i < nodeArgs.length; i++) {
-    if (i > 3 && i < nodeArgs.length) {
-      param = param + "+" + nodeArgs[i];
-    }
-    else {
-      param += nodeArgs[i];
-    }
-  }
-
- 
 
   var queryUrl = "http://www.omdbapi.com/?t=" + param + "&y=&plot=short&apikey=trilogy";
 
