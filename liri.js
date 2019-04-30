@@ -48,7 +48,7 @@ function input(action, param) {
   printInput =
     `\n=======================================================================\n`
     + `${printInput}` +
-    `\n=======================================================================\n`
+    `\n=======================================================================`
   // displays user input to terminal/bash and writes it to log.txt 
   saveData(printInput);
 }
