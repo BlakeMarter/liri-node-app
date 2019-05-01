@@ -97,12 +97,10 @@ function concertThis(param) {
 
 function spotifyThis(param) {
 
-  param = process.argv.slice(3).join(" ");
-
   if (!param) {
     param = "The Sign";
   }
-
+  
   spotify.search({ type: 'track', query: param }, function (err, response) {
 
     if (err) {
@@ -153,7 +151,7 @@ function movieThis(param) {
           return "\nRotten Tomatoes rating: " + response.data.Ratings[1].Value + "\n";
         }
       };
-      // Creating a wordWrap function to beautify the output to terminal and log.txt file
+      // Creating a wordWrap function to prettyprint the output to terminal and log.txt file
       str = response.data.Plot;
       str = wordWrap(str, 65);
 
@@ -200,6 +198,7 @@ function movieThis(param) {
         "\nPlot: " + str + "\n" +
         "\n-----------------------------------------------------------------------\n" +
         "\n";
+
       saveData(printMovie);
     })
 
@@ -217,7 +216,8 @@ function doThis() {
     if (err) {
       return console.log(err);
     }
-    var data = data.split(',')
+
+    var data = data.split(',');
 
     input(data[0], data[1]);
   })
