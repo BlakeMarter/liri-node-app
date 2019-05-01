@@ -3,13 +3,14 @@
 // -------------------------------------------------------------------------------------------------
 require("dotenv").config();
 
-var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
+var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
 var fs = require("fs");
 var axios = require("axios");
 var moment = require("moment");
 
+// debugger;
 // -------------------------------------------------------------------------------------------------
 // Creating input function to use in cammand line.
 // -------------------------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ function input(action, param) {
     + `${printInput}` +
     `\n=======================================================================`
   // displays user input to terminal/bash and writes it to log.txt 
+  // saveData(capitalize_Words(printInput));
   saveData(printInput);
 }
 // -------------------------------------------------------------------------------------------------
@@ -60,35 +62,32 @@ function input(action, param) {
 // -------------------------------------------------------------------------------------------------
 
 function concertThis(param) {
-
-  param = process.argv.slice(3).join(" ");
-
+  
+  param = capitalize_Words(process.argv.slice(3).join(" "));
+ 
   var queryUrl = "https://rest.bandsintown.com/artists/" + param + "/events?app_id=codingbootcamp";
-
+    
   axios
-    .get(queryUrl)
-    .then(function (response) {
-      // console.log("Response: " + response);
-
-      function capitalize_Words(str) {
-        return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
-      }
-
-      var printConcert =
-        "\n-----------------------------Concert-This------------------------------\n" +
-        "\nArtist/Band Name: " + capitalize_Words(param) + "\n" +
-        "\nVenue Name: " + response.data[0].venue.name + "\n" +
-        "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.country + "\n" +
-        "\nDate of the Event: " + moment(response.data[0].datetime).format("MM-DD-YYYY") + "\n" +
-        "\n-----------------------------------------------------------------------\n" +
-        "\n";
-      saveData(printConcert);
-
+  .get(queryUrl)
+  .then(function (response) {
+    // console.log(response);
+     
+          var printConcert =
+          "\n-----------------------------Concert-This------------------------------\n" +
+          "\nArtist/Band Name: " + param + "\n" +
+          "\nVenue Name: " + response.data[0].venue.name + "\n" +
+          "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.country + "\n" +
+          "\nDate of the Event: " + moment(response.data[0].datetime).format("MM-DD-YYYY") + "\n" +
+          "\n-----------------------------------------------------------------------\n" +
+          "\n";
+          saveData(printConcert);
     })
     .catch(function (error) {
-      console.log(error);
+      saveData("\n-----------------------------Concert-This------------------------------\n" + 
+      "\n" + param + " has no upcoming events. Sorry!\n" +
+      "\n-----------------------------------------------------------------------\n");
     });
-};
+}
 // -------------------------------------------------------------------------------------------------
 
 
@@ -123,7 +122,7 @@ function spotifyThis(param) {
       saveData(printSong);
     }
   });
-};
+}
 // -------------------------------------------------------------------------------------------------
 
 
@@ -204,7 +203,7 @@ function movieThis(param) {
       saveData(printMovie);
     })
 
-};
+}
 // -------------------------------------------------------------------------------------------------
 
 
@@ -242,8 +241,16 @@ function saveData(log) {
 }
 // -------------------------------------------------------------------------------------------------
 
+// -------------------------------------------------------------------------------------------------
+// A function to capitalize the first letter of each word
+// -------------------------------------------------------------------------------------------------
+
+function capitalize_Words(str) {
+  return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+}
 
 // -------------------------------------------------------------------------------------------------
 // Calling functions
 // -------------------------------------------------------------------------------------------------
-input(process.argv[2], process.argv.slice(3).join(" "));
+
+input(process.argv[2], capitalize_Words(process.argv.slice(3).join(" ")));
